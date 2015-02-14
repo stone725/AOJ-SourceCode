@@ -13,8 +13,7 @@ using namespace std;
 #define EXIST(s,e) ((s).find(e)!=(s).end())
 #define SORT(c) sort((c).begin(),(c).end())
 #define CLR(a) memset((a), 0 ,sizeof(a))
-#define dump(x) cout << #x << " = " << (x) << "\n";
-#define debug(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << " " << __FILE__ << "\n";
+#define NCLR(a) memset((a), -1 ,sizeof(a))
 #define sq(n) (n) * (n)
 typedef vector<int> VI;
 typedef vector<VI> VVI;
@@ -27,40 +26,59 @@ typedef unsigned int uint;
 typedef unsigned long long ull;
 typedef priority_queue<int> maxpq;
 typedef priority_queue< int, vector<int>, greater<int> > minpq;
+typedef complex<double> P;
 static const double EPS = 1e-10;
 static const double PI = acos( -1.0 );
-static const int mod = 10007;
-static const int INF = 1 << 25;
-static const LL LL_INF = 1152921504606846976;
-static const int dx[] = { -1, 0, 1, 0,  1, -1,  1, -1 };
-static const int dy[] = { 0, -1, 0, 1 , 1,  1, -1, -1 };
+static const int mod = 1000000007;
+static const int INF = 1 << 29;
+static const LL LL_INF = 1ll << 60;
+static const int dx[] = { -1, 0, 1, 0, 1, -1, 1, -1 };
+static const int dy[] = { 0, -1, 0, 1, 1, 1, -1, -1 };
 
-LL dp[ 31 ];
-LL ans, day, n, cnt;
+#ifdef WIN32
+#define dump(x) cout << #x << " = " << (x) << "\n"
+#define debug(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << " " << __FILE__ << "\n"
+#else
+#define dump(x)
+#define debug(x)
+#endif
 
-LL solve( int now ) {
-	if ( now < 0 ) {
-		return 0;
+int n;
+int dp[ 31 ];
+
+void solve() {
+	CLR( dp );
+	dp[ 0 ] = 1;
+	for ( int i = 0; i <= n; i++ ) {
+		for ( int j = 1; j < 4; j++ ) {
+			if ( i - j < 0 ) {
+				break;
+			}
+			dp[ i ] += dp[ i - j ];
+		}
 	}
-	if ( dp[ now ] >= 0 ) {
-		return dp[ now ];
-	}
-	if ( now == 0 ) {
-		return dp[ now ] = 1;
-	}
-	LL res = 0;
-	for ( int i = 1; i <= 3; i++ ) {
-		res += solve( now - i );
-	}
-	return dp[ now ] = res;
+	int ans = ( dp[ n ] / 10 + !!( dp[ n ] % 10 ) ) / 365 + !!( ( dp[ n ] / 10 + !!( dp[ n ] % 10 ) ) % 365 );
+	cout << ans << "\n";
 }
 
 int main() {
-	memset( dp, -1, sizeof( dp ) );
-	while ( ~scanf( "%d", &n ) && n ) {
-		day = solve( n );
-		ans = day / 3650 + !!( day % 3650 );
-		printf( "%lld\n", ans );
+	ios::sync_with_stdio( false );
+	cin.tie( 0 );
+#ifdef WIN32
+	srand( ( uint ) time( NULL ) );
+	cout << "Debug Mode\n";
+	while ( true ) {
+		n = rand() % 31;
+		cout << n << "\n";
+		if ( n == 0 ) {
+			break;
+		}
+		solve();
+	}
+	return 0;
+#endif
+	while ( cin >> n && n ) {
+		solve();
 	}
 	return 0;
 }
